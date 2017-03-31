@@ -1,0 +1,35 @@
+modificar el .l para que no use yyout. Main aparte
+
+%token -> y  
+bison -yd   (y.tab.h)
+
+
+.y
+identificador:  nombre_identificador
+cte_numerica: nombre_cte
+
+
+#define tok_error -1
+
+
+
+prioridad (mas abajo = mas prioritario)
+
+%left + - OR
+
+%left *  / AND
+
+%left ! -
+
+
+
+
+%right MU TOK_MENOS
+
+
+en la parte de reglas:
+
+exp: TOK_MENOS exp %prec MU
+
+
+para saber si es un error morfologico o sintactico, crear variable global, y consultarla en yyerror(); (modificarla)

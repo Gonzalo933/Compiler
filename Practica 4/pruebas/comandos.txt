@@ -1,0 +1,5 @@
+Comandos
+nasm -g -o prueba.o -f elf prueba.asm
+
+gcc -o prueba prueba.o alfalib.o
+

@@ -1,0 +1,13 @@
+bison:
+bison -dyv nombre.y
+o
+bison -dy nombre.y
+
+
+flex:
+flex nombre.l
+
+compilar
+gcc -Wall -o prueba lex.yy.c y.tab.c
+
+

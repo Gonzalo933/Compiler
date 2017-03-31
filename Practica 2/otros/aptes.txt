@@ -1,0 +1,7 @@
+Errores morfologicos. -> patrones "." 
+Posicion patrones .l para el funcionamiento de flex -> solapamiento (transparencias)
+linea y columna actual? -> C, mirar yylex yylenght?... etc, variables globales en C
+blancos , saltos de linea ,\t \n .. comentarios.. -> patrones para identificarlos, por defecto flex, si no reconoce el patron, lo manda igual a la salida.
+
+para ignorar los \r -> "\r" {} 
+con lo cual para ignorar comentarios y mierdas asi "\\" {}  ????

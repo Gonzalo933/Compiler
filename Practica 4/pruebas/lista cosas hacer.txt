@@ -1,0 +1,13 @@
+obs. analizador semantico  4-13
+	
+declaracion variables locales y globales    14-33 		 7-12
+
+uso de identificadores 40-42
+
+gestion ctes enteras 51,52,54,55  			18,20
+
+asignacion 63,64  			47,48
+
+operaciones de salida  72  	 52,54
+
+primera columna numeros, pdf semantico segunda columna numeros generacion codigo

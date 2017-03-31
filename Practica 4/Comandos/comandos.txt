@@ -1,0 +1,5 @@
+./alfa ej_bucles.alf salida.asm
+nasm -g -o salida.o -f elf salida.asm
+gcc -o salida salida.o alfalib.o
+
+se necesita fichero alfalib.o

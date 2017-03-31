@@ -1,0 +1,278 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!-- saved from url=(0063)http://ccia.ei.uvigo.es/docencia/PL/practicas01/practica-3.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+
+<title>3.- Introducción a BISON/YACC.</title>
+<link rel="stylesheet" href="./3.- Introducción a BISON YACC._files/ccia.css" type="text/css">
+</head>
+<body>
+<div class="global">
+<table border="0" cellspacing="0" cellpadding="0">
+<tbody><tr>
+<td width="88" class="banda">
+<br>
+</td><td width="100%">
+<p class="logo">
+<a href="http://ccia.ei.uvigo.es/"><img src="./3.- Introducción a BISON YACC._files/logo-ccia.png" border="0" alt="CCIA"></a>
+</p>
+</td>
+</tr>
+<tr>
+<td width="88" class="banda">
+<hr width="80%" align="right" size="4" noshade="">
+</td><td width="100%">
+<hr noshade="" size="4">
+</td>
+</tr>
+<tr>
+<td width="88" class="banda">
+<p>
+<br>
+</p>
+</td><td width="100%">
+<div class="main">
+<div class="navigator">
+|<a href="http://ccia.ei.uvigo.es/docencia/index.html">
+Asignaturas
+</a>|
+|<a href="http://ccia.ei.uvigo.es/docencia/PL/index.html">
+PL
+</a>|
+|<a href="http://ccia.ei.uvigo.es/docencia/PL/practicas01/index.html">
+PL - Prácticas
+</a>|
+ - <a href="http://ccia.ei.uvigo.es/docencia/PL/practicas01/practica-1erC.html">|Siguiente|</a><a href="http://ccia.ei.uvigo.es/docencia/PL/practicas01/practica-2.html">|Anterior|</a>
+</div>
+
+
+<h2>PRACTICA 3: Introducción a BISON/YACC.</h2>
+<p>
+</p>
+<a href="http://ccia.ei.uvigo.es/docencia/PL/doc/BISON.html"> Mini-tutorial de BISON</a>
+<p>
+</p>
+<br>
+<hr>
+<i>
+Se presentará el proceso  de generación de analizadores sintácticos 
+en C a partir de una especificación BISON.  
+</i>
+<hr>
+
+<h2> 1. Compilación de una especificación BISON. </h2>
+<p>
+</p> Compilar las dos especificaciones BISON siguientes y comprobar su funcionamiento. 
+
+<p>
+</p>
+<br> EJEMPLO 1
+<p>
+</p> Minianalizador sintáctico para frases en español. 
+
+<pre><tt>
+%token ARTICULO, NOMBRE, ADJETIVO, PREPOSICION, VERBO 
+
+%% 
+
+dialogo : frase 
+        | dialogo  frase  
+; 
+
+frase : '\n' 
+      | sujeto predicado  '\n'  {printf("\n&gt;&gt; Frase correcta\n");} 
+; 
+
+sujeto : frase_nominal 
+; 
+
+frase_nominal : NOMBRE 
+              | ARTICULO NOMBRE 
+              | ARTICULO NOMBRE ADJETIVO 
+              | ARTICULO NOMBRE frase_preposicional 
+;                
+
+frase_preposicional : PREPOSICION frase_nominal 
+; 
+
+predicado : frase_verbal 
+; 
+
+frase_verbal : VERBO  
+             | VERBO frase_nominal 
+             | VERBO frase_preposicional 
+;           
+              
+%% 
+               
+int main() 
+{ 
+    yyparse(); 
+} 
+              
+void yyerror (char *s) 
+{ 
+    printf ("%s\n", s); 
+               
+} 
+
+int yywrap()   
+{   
+    return 1;   
+}   
+</tt>
+</pre>
+
+<p>
+</p>Descargad y descomprimid el fichero <a href="http://ccia.ei.uvigo.es/docencia/PL/doc/ejemplo1.tgz"> ejemplo1.tgz</a>.
+
+<p>
+</p>
+<br> COMPILACIÓN
+<pre><tt>
+   $ bison -d ejemplo1.y 
+   $ flex ejemplo1.l  
+   $ gcc -o ejemplo1 ejemplo1.tab.c lex.yy.c  
+</tt>
+</pre>
+<p>
+</p> Tambien es posible utilizar el comando <tt>make</tt> (se incluye fichero <tt>Makefile</tt>). 
+
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<br> EJEMPLO 2
+<p>
+</p>Calculadora básica para números enteros. 
+
+<pre><tt>
+%{ 
+#define YYSTYPE int
+#include &lt;math.h&gt;    
+%} 
+
+/* Declaraciones de BISON */ 
+%token ENTERO 
+%left '-' '+' 
+%left '*' '/' 
+
+%%
+               
+/* Gramática */ 
+
+input:     /* cadena vacía */ 
+          | input line 
+; 
+               
+line:      '\n' 
+          | exp '\n'  { printf ("\t%d\n", $1); } 
+; 
+               
+exp:       ENTERO             { $$ = $1;         } 
+          | exp '+' exp        { $$ = $1 + $3;    } 
+          | exp '-' exp        { $$ = $1 - $3;    } 
+          | exp '*' exp        { $$ = $1 * $3;    } 
+          | exp '/' exp        { $$ = $1 / $3;    } 
+; 
+
+%% 
+
+int main() 
+{ 
+    yyparse(); 
+} 
+              
+void yyerror (char *s) 
+{ 
+    printf ("%s\n", s); 
+               
+} 
+
+int yywrap()   
+{   
+    return 1;   
+}   
+
+</tt>
+</pre>
+
+<p>
+</p>Descargad y descomprimid el fichero <a href="http://ccia.ei.uvigo.es/docencia/PL/doc/ejemplo2.tgz"> ejemplo2.tgz</a>.
+
+<p>
+</p>
+<br> COMPILACIÓN
+<pre><tt>
+   $ bison -d ejemplo2.y 
+   $ flex ejemplo2.l  
+   $ gcc -o ejemplo2 ejemplo2.tab.c lex.yy.c -lm 
+</tt>
+</pre>
+<p>
+</p> Tambien es posible utilizar el comando <tt>make</tt> (se incluye fichero <tt>Makefile</tt>). 
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<p>
+</p>
+<h2> 2. Ejercicio práctico. </h2>
+<p>
+</p> Escribir las especificaciones bison y flex, además del código adicional que 
+sea necesario, para extender la calculadora del último ejemplo de acuerdo a las 
+siguientes especificaciones : 
+<ul>
+<li>Modificar el analizador léxico para que acepte y maneje números reales.  </li>
+<li>Incluir los operadores "-" (cambio de signo) y "^" (exponenciación) y soportar 
+    el uso de paréntesis para agrupar expresiones y cambiar su asociatividad.  </li>
+<li>Incluir la posibilidad de definir variables y de utilizarlas en los cálculos. 
+    <ul>
+    <li>Los nombres de variable serán secuencias de caracteres alfanuméricos más el "_", 
+        con la restricción de que no podrán comenzar por un número.  </li>
+    <li>No se distinguen mayúsculas y minúscula. (Ej.: <tt>Velocidad, velocidad y VeLoCiDaD</tt> 
+        son el mismo identificador)  </li>
+    <li>La declaración de variables será de la forma : 
+        <tt>&lt;identificador_variable&gt; = &lt;valor&gt;</tt> (donde <tt>valor</tt> puede ser 
+        una constante numérica o el resultado de una expresion aritmética) </li>
+    <li>Será necesario implementar  algún tipo de estructura que haga la función de 
+        "tabla de símbolos" y que relacionará cada nombre de variable con el valor que tenga 
+        asociado en ese momento. La elección de las estructras de almacenamiento es libre.(1)  </li>
+    <li>Será posible redefinir el valor de las variables una vez creadas, sobreescribiendo 
+        el valor anterior.</li>
+    <li>Si el usuario indica un nombre de variable que no existe se le informará con un mensaje 
+        de error indicando que la variable no está definida y se continuará la ejecución.</li>
+    </ul>
+</li>
+<p>
+</p>
+<p>
+</p>
+<br> NOTAS :
+<p>
+</p> (1) En el manual de BISON se incluye un ejemplo similar a este, aunque algo más complejo, 
+     que utiliza una lista enlazada para implementar la tabla de símbolos.   
+<p>
+</p> La forma más sencilla de implementar la tabla es usar un array de pares (nombre, valor) y 
+     fijar un límite en el número de variables permitidas (por ejemplo, 30) y en caso de 
+     sobrepasarlo informar del error. 
+<p> (2) Aunque la calculadora debe admitir tanto números reales como enteros, se recomienda que,
+    para evitar problemas de conversión de tipos, la aritmetica interna del programa se realize
+    con números reales.
+</p>
+
+<p>
+</p>
+
+
+</ul></div>
+</td>
+</tr>
+</tbody></table>
+</div>
+
+
+</body></html>
